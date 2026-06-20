@@ -5,29 +5,31 @@ from storage import load_system, save_system
 from members import (
     add_member,
     count_members_per_role,
-    filter_members_by_role,
     filter_members_by_tasks_advance,
     count_member_tasks_by_status,
     count_member_tasks_by_priority,
     filter_members_by_tasks_priority,
-    list_member_tasks,
+    list_members,
+    search_member_by_id,
+    ALLOWED_ROLES
 )
 from projects import (
     add_project,
     add_project_member,
-    update_project_status,
     count_project_status,
     filter_project_status,
     list_projects,
+    search_project_by_id
 )
 from tasks import (
     create_task,
     assign_task,
     reassign_task,
     update_task_status,
-    update_task_priority,
-    update_task_hours,
     list_tasks,
+    search_task_by_id,
+    ALLOWED_PRIORITIES,
+    ALLOWED_STATUS
 )
 
 
@@ -45,267 +47,194 @@ os.makedirs("data_files", exist_ok=True)
 
 members, projects, tasks = load_system()
 
+while True:
+    s = input("1. List members 2. Add member 3. List projects 4. Add project 5. Add member to project 6. List tasks 7. Create task 8. Assign task 9. Update task status 10. Show reports 0. Save and exit ")
+    if s == "0":
+        print("Informacion guardada")
+        save_system(members,projects,tasks)
+        break
+    elif s == "1":
+        pprint(list_members(members))
+    elif s == "2":
+        name = input("Name: ")
+        email = input("Email: ")
+        while True:
+            possible_roles = ["1","2","3","4","5"]
+            role = input("1. Backend 2. Frontend 3. Designer 4. QA 5. Project_manager")
+            if role not in possible_roles:
+                print("Invalid input")
+            else:
+                role_index = int(role) - 1
+                role = ALLOWED_ROLES[role_index]
+                break
+        member = add_member(members, name, email, role)
+        if member is None:
+            print("Email is already in use")
+        else:    
+            pprint(f"Member: \n{member}")
+    elif s == "3":
+        pprint(list_projects(projects))
+    elif s == "4":
+        name = input("Name: ")
+        description = input("Description: ")
+        project = add_project(projects, name, description)
+        if project is None:
+            print("The project name is in use")
+        else:
+            pprint(f"Project: \n{project}")
+    elif s == "5":
+        member_id = input("Id member: ")
+        project_id = input("Id project ")
+        try:
+            member_id = int(member_id)
+        except ValueError:
+            print("Invalid id member")
+            continue
+        try:
+            project_id = int(project_id)
+        except ValueError:
+            print("Invalid id project")
+            continue
+        member = search_member_by_id(members, member_id)
+        project = search_project_by_id(projects, project_id)
+        if member is None:
+            print("Member does not exist")
+        elif project is None:
+            print("Project does not exist")
+        elif  not member["active"]:
+            print("Member inactive")
+        elif not project["active"]:
+            print("Project inactive")
+        else:
+            member_add = add_project_member(projects, members, project_id, member_id)
+            if member_add is None:
+                print("This member is already assigned to this project")
+            else:
+                pprint(f"Project: \n{member_add}")
+    elif s == "6":
+        pprint(list_tasks(tasks))
+    elif s == "7":
+        project_id = input("Project Id: ")
+        try:
+            project_id = int(project_id)
+        except ValueError:
+            print("Invalid id project")
+            continue
+        project = search_project_by_id(projects, project_id)
 
-# =========================
-# CREAR MIEMBROS
-# =========================
-# Solo se crean si members.json está vacío.
+        if project is None:
+            print("Project does not exist")
+            continue
 
-add_member(members, "Mario Volkmar", "mario@email.com", "backend")
-add_member(members, "Laura Gomez", "laura@email.com", "frontend")
-add_member(members, "Carlos Perez", "carlos@email.com", "designer")
-add_member(members, "Sofia Ramirez", "sofia@email.com", "qa")
-add_member(members, "Andres Torres", "andres@email.com", "project_manager")
+        if not project["active"]:
+            print("Project is inactive")
+            continue
 
-
-# =========================
-# CREAR PROYECTOS
-# =========================
-
-add_project(
-        projects,
-        "Backend API",
-        "API for managing members, projects and tasks",
-    )
-add_project(
-        projects,
-        "Ecommerce Automation",
-        "Automation system for products, customers and sales",
-    )
-
-add_project(
-        projects,
-        "AI Support Assistant",
-        "AI assistant for customer support workflows",
-    )
-
-
-# =========================
-# AGREGAR MIEMBROS A PROYECTOS
-# =========================
-
-
-add_project_member(projects, members, 1, 1)
-add_project_member(projects, members, 1, 2)
-add_project_member(projects, members, 1, 4)
-add_project_member(projects, members, 1, 5)
-
-add_project_member(projects, members, 2, 1)
-add_project_member(projects, members, 2, 3)
-add_project_member(projects, members, 2, 5)
-
-add_project_member(projects, members, 3, 1)
-add_project_member(projects, members, 3, 2)
-add_project_member(projects, members, 3, 4)
-add_project_member(projects, members, 3, 5)
-
-
-# =========================
-# CREAR TAREAS
-# =========================
-
-create_task(
-        tasks,
-        projects,
-        1,
-        "Create project models",
-        "Define base dictionaries for members, projects and tasks",
-        "high",
-        5,
-    )
-
-create_task(
-        tasks,
-        projects,
-        1,
-        "Build API endpoints",
-        "Create CRUD endpoints for the backend API",
-        "urgent",
-        12,
-    )
-
-create_task(
-        tasks,
-        projects,
-        1,
-        "Test project workflow",
-        "Validate project creation, updates and member assignment",
-        "medium",
-        4,
-    )
-
-create_task(
-        tasks,
-        projects,
-        2,
-        "Create product workflow",
-        "Implement product creation and stock validation",
-        "high",
-        7,
-    )
-
-create_task(
-        tasks,
-        projects,
-        2,
-        "Design sales report",
-        "Create basic sales summaries by customer and product",
-        "medium",
-        6,
-    )
-
-create_task(
-        tasks,
-        projects,
-        3,
-        "Prepare AI prompt logic",
-        "Define prompt templates for support assistant responses",
-        "high",
-        8,
-    )
-
-create_task(
-        tasks,
-        projects,
-        3,
-        "Create QA test cases",
-        "Prepare test cases for assistant answers and edge cases",
-        "medium",
-        5,
-    )
-
-create_task(
-        tasks,
-        projects,
-        3,
-        "Design assistant interface",
-        "Create basic frontend structure for the assistant",
-        "low",
-        4,
-    )
-# =========================
-# ASIGNAR TAREAS
-# =========================
-
-assign_task(members, 1, tasks, 1)
-assign_task(members, 1, tasks, 2)
-assign_task(members, 4, tasks, 3)
-
-assign_task(members, 1, tasks, 4)
-assign_task(members, 3, tasks, 5)
-
-assign_task(members, 1, tasks, 6)
-assign_task(members, 4, tasks, 7)
-assign_task(members, 2, tasks, 8)
-
-# =========================
-# ACTUALIZAR TAREAS
-# =========================
-
-update_task_status(tasks, 1, "in_progress")
-update_task_status(tasks, 3, "completed")
-update_task_status(tasks, 5, "blocked")
-update_task_status(tasks, 7, "in_progress")
-
-update_task_priority(tasks, 8, "medium")
-update_task_hours(tasks, 2, 15)
-
-# =========================
-# REASIGNAR TAREA
-# =========================
-# La tarea 8 estaba asignada a Laura.
-# Ahora se reasigna a Mario.
-
-reassign_task(members, 1, tasks, 8)
-
-
-# =========================
-# ACTUALIZAR ESTADO DE PROYECTOS
-# =========================
-
-update_project_status(projects, 1, "in_progress")
-update_project_status(projects, 2, "in_progress")
-update_project_status(projects, 3, "planning")
-
-
-# =========================
-# PRUEBAS DE VALIDACIÓN
-# =========================
-
-print("\n--- Intentos inválidos ---")
-
-invalid_member = add_member(members, "Invalid User", "bad@email.com", "invalid_role")
-print("Miembro con rol inválido:", invalid_member)
-
-duplicated_member = add_member(members, "Mario Copy", "mario@email.com", "backend")
-print("Miembro con email duplicado:", duplicated_member)
-
-duplicated_project = add_project(projects, "Backend API", "Duplicated project")
-print("Proyecto duplicado:", duplicated_project)
-
-invalid_task = create_task(
-    tasks,
-    projects,
-    99,
-    "Invalid task",
-    "Task for non-existing project",
-    "high",
-    3,
-)
-print("Tarea con proyecto inexistente:", invalid_task)
-
-invalid_assignment = assign_task(members, 99, tasks, 1)
-print("Asignación a miembro inexistente:", invalid_assignment)
-
-duplicated_assignment = assign_task(members, 2, tasks, 1)
-print("Asignación de tarea ya asignada:", duplicated_assignment)
-
-
-# =========================
-# REPORTES
-# =========================
-
-print("\n--- Miembros ---")
-pprint(members)
-
-print("\n--- Proyectos ---")
-pprint(list_projects(projects))
-
-print("\n--- Tareas ---")
-pprint(list_tasks(tasks))
-
-print("\n--- Tareas de Mario por ID ---")
-pprint(list_member_tasks(members, 1))
-
-print("\n--- Conteo de miembros por rol ---")
-pprint(count_members_per_role(members))
-
-print("\n--- Miembros agrupados por rol ---")
-pprint(filter_members_by_role(members))
-
-print("\n--- Avance de tareas por miembro ---")
-pprint(filter_members_by_tasks_advance(members, tasks))
-
-print("\n--- Conteo de tareas por estado por miembro ---")
-pprint(count_member_tasks_by_status(members, tasks))
-
-print("\n--- Conteo de tareas por prioridad por miembro ---")
-pprint(count_member_tasks_by_priority(members, tasks))
-
-print("\n--- Conteo global de tareas por prioridad desde miembros ---")
-pprint(filter_members_by_tasks_priority(members, tasks))
-
-print("\n--- Conteo de proyectos por estado ---")
-pprint(count_project_status(projects))
-
-print("\n--- Proyectos en progreso ---")
-pprint(filter_project_status(projects, "in_progress"))
-
-
-# =========================
-# GUARDAR SISTEMA
-# =========================
-
-save_system(members, projects, tasks)
-
-print("\nSistema guardado correctamente en data_files/")
+        title = input("Title: ")
+        description = input("Description: ")
+        while True:
+            estimated_hours = input("Estimated hours: ")
+            try:
+                estimated_hours = float(estimated_hours)
+                if estimated_hours <= 0:
+                    print("The hours must be higher than 0")
+                else:
+                    break
+            except ValueError:
+                print("Invalid input")
+        while True:
+            priority = input("1. Low 2. Medium 3. High 4. Urgent ")
+            possible_priority = ["1","2","3","4"]
+            if priority not in possible_priority:
+                print("Invalid input")
+            else:
+                priority_index = int(priority) - 1
+                priority = ALLOWED_PRIORITIES[priority_index]
+                break
+        task = create_task(tasks, projects, project_id, title, description, priority, estimated_hours)
+        pprint(f"Task: \n{task}")
+    elif s == "8":
+        member_id = input("Member id: ")
+        try:
+            member_id = int(member_id)
+        except ValueError:
+            print("Invalid input")
+            continue
+        task_id = input("Task id: ")
+        try:
+            task_id = int(task_id)
+        except ValueError:
+            print("Invalid input")
+            continue
+        task = search_task_by_id(tasks, task_id)
+        if task is None:
+            print("Task does not exist")
+            continue
+        if  not task["active"]:
+            print("Task is inactive")
+            continue
+        member = search_member_by_id(members, member_id)
+        if member is None:
+            print("Member does not exist")
+            continue
+        if not member["active"]:
+            print("Member is inactive")
+            continue
+        if task_id in member["tasks"]:
+            print("Task is already assigned to this member")
+            continue
+        
+        if task["assigned_to"] is not None:
+            re_task = reassign_task(members, member_id, tasks, task_id)
+            pprint(f"Task: \n{re_task}")
+        else:
+            re_task = assign_task(members, member_id, tasks, task_id)
+            pprint(f"Task: \n{re_task}")
+    elif s == "9":
+        task_id = input("Id Task: ")
+        try:
+            task_id = int(task_id)
+        except ValueError:
+            print("Invalid id task")
+            continue
+        while True:
+            status = input("1. Pending 2. In progress 3. Completed 4. Blocked")
+            possible_status = ["1","2","3","4"]
+            if status not in possible_status:
+                print("Invalid input")
+            else:
+                status_index = int(status) - 1
+                status = ALLOWED_STATUS[status_index]
+                break
+        src_task = search_task_by_id(tasks, task_id)
+        if src_task is None:
+            print("Task does not exist")
+            continue
+        if  not src_task["active"]:
+            print("Task is inactive")
+            continue
+        task = update_task_status(tasks, task_id, status)
+        pprint(f"Task: \n{task}")
+    elif s == "10":
+        while True:
+            sr = input("1. Member count by role 2. Project count by status 3. Task progress by members 4. Tasks by status by member 5. Tasks by priority by member 6. Overall priority count 7. Projects in progress 0. Exit")
+            if sr == "0":
+                break
+            elif sr == "1":
+                pprint(count_members_per_role(members))
+            elif sr == "2":
+                pprint(count_project_status(projects))
+            elif sr == "3":
+                pprint(filter_members_by_tasks_advance(members, tasks))
+            elif sr == "4":
+                pprint(count_member_tasks_by_status(members, tasks))
+            elif sr == "5":
+                pprint(count_member_tasks_by_priority(members,tasks))
+            elif sr == "6":
+                pprint(filter_members_by_tasks_priority(members, tasks))
+            elif sr == "7":
+                pprint(filter_project_status(projects,"in_progress"))
+            else:
+                print("Invalid input")
+    else:
+        print("Invalid input")
