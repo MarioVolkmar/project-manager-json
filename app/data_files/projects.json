@@ -1,0 +1,40 @@
+[
+    {
+        "id_project": 1,
+        "name": "backend api",
+        "description": "api for managing members, projects and tasks",
+        "status": "in_progress",
+        "active": true,
+        "members": [
+            1,
+            2,
+            4,
+            5
+        ]
+    },
+    {
+        "id_project": 2,
+        "name": "ecommerce automation",
+        "description": "automation system for products, customers and sales",
+        "status": "in_progress",
+        "active": true,
+        "members": [
+            1,
+            3,
+            5
+        ]
+    },
+    {
+        "id_project": 3,
+        "name": "ai support assistant",
+        "description": "ai assistant for customer support workflows",
+        "status": "planning",
+        "active": true,
+        "members": [
+            1,
+            2,
+            4,
+            5
+        ]
+    }
+]

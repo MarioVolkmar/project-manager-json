@@ -1,0 +1,53 @@
+[
+    {
+        "id_member": 1,
+        "name": "mario volkmar",
+        "email": "mario@email.com",
+        "role": "backend",
+        "active": true,
+        "tasks": [
+            1,
+            2,
+            4,
+            6,
+            8
+        ]
+    },
+    {
+        "id_member": 2,
+        "name": "laura gomez",
+        "email": "laura@email.com",
+        "role": "frontend",
+        "active": true,
+        "tasks": []
+    },
+    {
+        "id_member": 3,
+        "name": "carlos perez",
+        "email": "carlos@email.com",
+        "role": "designer",
+        "active": true,
+        "tasks": [
+            5
+        ]
+    },
+    {
+        "id_member": 4,
+        "name": "sofia ramirez",
+        "email": "sofia@email.com",
+        "role": "qa",
+        "active": true,
+        "tasks": [
+            3,
+            7
+        ]
+    },
+    {
+        "id_member": 5,
+        "name": "andres torres",
+        "email": "andres@email.com",
+        "role": "project_manager",
+        "active": true,
+        "tasks": []
+    }
+]

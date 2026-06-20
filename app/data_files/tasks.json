@@ -1,0 +1,90 @@
+[
+    {
+        "id_task": 1,
+        "project_id": 1,
+        "title": "create project models",
+        "description": "define base dictionaries for members, projects and tasks",
+        "status": "in_progress",
+        "priority": "high",
+        "estimated_hours": 5,
+        "assigned_to": 1,
+        "active": true
+    },
+    {
+        "id_task": 2,
+        "project_id": 1,
+        "title": "build api endpoints",
+        "description": "create crud endpoints for the backend api",
+        "status": "pending",
+        "priority": "urgent",
+        "estimated_hours": 15,
+        "assigned_to": 1,
+        "active": true
+    },
+    {
+        "id_task": 3,
+        "project_id": 1,
+        "title": "test project workflow",
+        "description": "validate project creation, updates and member assignment",
+        "status": "completed",
+        "priority": "medium",
+        "estimated_hours": 4,
+        "assigned_to": 4,
+        "active": true
+    },
+    {
+        "id_task": 4,
+        "project_id": 2,
+        "title": "create product workflow",
+        "description": "implement product creation and stock validation",
+        "status": "pending",
+        "priority": "high",
+        "estimated_hours": 7,
+        "assigned_to": 1,
+        "active": true
+    },
+    {
+        "id_task": 5,
+        "project_id": 2,
+        "title": "design sales report",
+        "description": "create basic sales summaries by customer and product",
+        "status": "blocked",
+        "priority": "medium",
+        "estimated_hours": 6,
+        "assigned_to": 3,
+        "active": true
+    },
+    {
+        "id_task": 6,
+        "project_id": 3,
+        "title": "prepare ai prompt logic",
+        "description": "define prompt templates for support assistant responses",
+        "status": "pending",
+        "priority": "high",
+        "estimated_hours": 8,
+        "assigned_to": 1,
+        "active": true
+    },
+    {
+        "id_task": 7,
+        "project_id": 3,
+        "title": "create qa test cases",
+        "description": "prepare test cases for assistant answers and edge cases",
+        "status": "in_progress",
+        "priority": "medium",
+        "estimated_hours": 5,
+        "assigned_to": 4,
+        "active": true
+    },
+    {
+        "id_task": 8,
+        "project_id": 3,
+        "title": "design assistant interface",
+        "description": "create basic frontend structure for the assistant",
+        "status": "pending",
+        "priority": "medium",
+        "estimated_hours": 4,
+        "assigned_to": 1,
+        "active": true
+    }
+]
